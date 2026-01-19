@@ -2,7 +2,7 @@
 
 A robust, full-stack solution for managing customer support tickets, featuring a secure REST API and a custom admin dashboard.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js (v18+)
@@ -39,7 +39,7 @@ A robust, full-stack solution for managing customer support tickets, featuring a
     ```
     Visit `http://localhost:3000` to log in.
 
-### 🐳 Docker Setup
+### Docker Setup
 ```bash
 docker build -t stms-app .
 docker run -p 3000:3000 --env-file .env stms-app
@@ -47,7 +47,7 @@ docker run -p 3000:3000 --env-file .env stms-app
 
 ---
 
-## 🛠 Tech Stack & Key Decisions
+## Tech Stack & Key Decisions
 
 ### **Backend: Node.js + Express**
 *   **Why**: Industry standard for building scalable, non-blocking APIs.
@@ -66,7 +66,7 @@ docker run -p 3000:3000 --env-file .env stms-app
 
 ---
 
-## ⚖️ Trade-offs & Priorities
+## Trade-offs & Priorities
 
 ### What I Prioritized
 1.  **Security (RBAC)**: Ensuring Customers can't see internal notes or other users' tickets was a P0 requirement.
@@ -79,7 +79,7 @@ docker run -p 3000:3000 --env-file .env stms-app
 3.  **Real Email Service**: Currently uses Ethereal (Mock). Creating a real SendGrid/AWS SES account was out of scope.
 4.  **Automated Tests**: Added basic shell scripts, but a full Jest/Supertest suite is needed for production confidence.
 
-## 🔮 Future Improvements
+## Future Improvements
 If I had more time, I would:
 1.  **Migrate Frontend to Next.js**: For better routing, server-side rendering, and cleaner component code.
 2.  **Add Real-time Features**: Use `Socket.io` to update the dashboard instantly when a new ticket arrives.
