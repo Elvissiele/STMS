@@ -1,6 +1,6 @@
-const prisma = require('../config/prisma');
+import prisma from '../config/prisma.js';
 
-const createTicket = async (req, res) => {
+export const createTicket = async (req, res) => {
     try {
         const { title, description, priority } = req.body;
         const ticket = await prisma.ticket.create({
@@ -18,7 +18,7 @@ const createTicket = async (req, res) => {
     }
 };
 
-const getTickets = async (req, res) => {
+export const getTickets = async (req, res) => {
     try {
         const { role, id } = req.user;
         let tickets;
@@ -44,7 +44,7 @@ const getTickets = async (req, res) => {
     }
 };
 
-const updateTicket = async (req, res) => {
+export const updateTicket = async (req, res) => {
     try {
         const { id } = req.params;
         const { status, assignedToId, priority } = req.body;
@@ -52,10 +52,6 @@ const updateTicket = async (req, res) => {
         // Verify existence
         const ticket = await prisma.ticket.findUnique({ where: { id: parseInt(id) } });
         if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
-
-        // Logic handled by authorizedRole middleware, assuming this route is protected for Agents/Admins
-        // However, we might want to allow CUSTOMER to close their own ticket? 
-        // For simplicity based on requirements: "Update status/assign (Agent/Admin)"
 
         const updatedTicket = await prisma.ticket.update({
             where: { id: parseInt(id) },
@@ -72,15 +68,15 @@ const updateTicket = async (req, res) => {
     }
 };
 
-const addComment = async (req, res) => {
+export const addComment = async (req, res) => {
     try {
         const { id } = req.params;
-        const { content } = req.body;
+        const { content, isInternal } = req.body;
 
         const ticket = await prisma.ticket.findUnique({ where: { id: parseInt(id) } });
         if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
 
-        // RBAC Check: Is user author or Agent/Admin?
+        // RBAC Check
         if (req.user.role === 'CUSTOMER' && ticket.authorId !== req.user.id) {
             return res.status(403).json({ message: 'Forbidden' });
         }
@@ -88,6 +84,7 @@ const addComment = async (req, res) => {
         const comment = await prisma.comment.create({
             data: {
                 content,
+                isInternal: isInternal || false,
                 ticketId: parseInt(id),
                 authorId: req.user.id,
             },
@@ -99,7 +96,7 @@ const addComment = async (req, res) => {
     }
 };
 
-const getTicketDetails = async (req, res) => {
+export const getTicketDetails = async (req, res) => {
     try {
         const { id } = req.params;
         const ticket = await prisma.ticket.findUnique({
@@ -114,8 +111,12 @@ const getTicketDetails = async (req, res) => {
         if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
 
         // Access control
-        if (req.user.role === 'CUSTOMER' && ticket.authorId !== req.user.id) {
-            return res.status(403).json({ message: 'Forbidden' });
+        if (req.user.role === 'CUSTOMER') {
+            if (ticket.authorId !== req.user.id) {
+                return res.status(403).json({ message: 'Forbidden' });
+            }
+            // Filter out internal comments for customers
+            ticket.comments = ticket.comments.filter(comment => !comment.isInternal);
         }
 
         res.json(ticket);
@@ -124,5 +125,3 @@ const getTicketDetails = async (req, res) => {
         res.status(500).json({ message: 'Error fetching ticket details' });
     }
 }
-
-module.exports = { createTicket, getTickets, updateTicket, addComment, getTicketDetails };

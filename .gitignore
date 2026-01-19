@@ -8,3 +8,6 @@ yarn-debug.log*
 yarn-error.log*
 dev.db
 dev.db-journal
+
+server.log
+server.pid

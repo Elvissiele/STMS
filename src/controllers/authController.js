@@ -1,9 +1,9 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const prisma = require('../config/prisma');
-const { SECRET_KEY } = require('../middlewares/authMiddleware');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import prisma from '../config/prisma.js';
+import { SECRET_KEY } from '../middlewares/authMiddleware.js';
 
-const register = async (req, res) => {
+export const register = async (req, res) => {
     try {
         const { email, password, name } = req.body;
 
@@ -29,7 +29,7 @@ const register = async (req, res) => {
     }
 };
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await prisma.user.findUnique({ where: { email } });
@@ -45,5 +45,3 @@ const login = async (req, res) => {
         res.status(500).json({ message: 'Error logging in' });
     }
 };
-
-module.exports = { register, login };

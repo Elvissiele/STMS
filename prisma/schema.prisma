@@ -45,6 +45,7 @@ model Ticket {
 model Comment {
   id        Int      @id @default(autoincrement())
   content   String
+  isInternal Boolean  @default(false)
   createdAt DateTime @default(now())
 
   authorId  Int

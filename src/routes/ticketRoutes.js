@@ -1,6 +1,6 @@
-const express = require('express');
-const { createTicket, getTickets, updateTicket, addComment, getTicketDetails } = require('../controllers/ticketController');
-const { authenticateToken, authorizeRole } = require('../middlewares/authMiddleware');
+import express from 'express';
+import { createTicket, getTickets, updateTicket, addComment, getTicketDetails } from '../controllers/ticketController.js';
+import { authenticateToken, authorizeRole } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
@@ -17,4 +17,4 @@ router.patch('/:id', authorizeRole(['AGENT', 'ADMIN']), updateTicket);
 // Commenting
 router.post('/:id/comments', addComment);
 
-module.exports = router;
+export default router;

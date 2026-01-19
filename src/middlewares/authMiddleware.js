@@ -1,9 +1,9 @@
-const jwt = require('jsonwebtoken');
-const prisma = require('../config/prisma');
+import jwt from 'jsonwebtoken';
+import prisma from '../config/prisma.js';
 
 const SECRET_KEY = process.env.JWT_SECRET || 'supersecretkey';
 
-const authenticateToken = (req, res, next) => {
+export const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -16,7 +16,7 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-const authorizeRole = (roles) => {
+export const authorizeRole = (roles) => {
     return (req, res, next) => {
         if (!req.user || !roles.includes(req.user.role)) {
             return res.status(403).json({ message: 'Forbidden: Insufficient permissions' });
@@ -25,4 +25,4 @@ const authorizeRole = (roles) => {
     };
 };
 
-module.exports = { authenticateToken, authorizeRole, SECRET_KEY };
+export { SECRET_KEY };
